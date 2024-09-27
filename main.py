@@ -14,7 +14,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 def hin_fetch(subject, weights, pooling):
     current_time = datetime.now().strftime("%m-%d_%H-%M")
     data_path = f"web_data/{hash(subject)}.json"
-    file_path = f"logs/run_{current_time}.md"
+    file_path = f"logs/run_{current_time}_{weights}{pooling}.md"
     log_content = f"# Hin run, {current_time}\n\nSubject : {subject}\n\n"
 
     results = []
@@ -55,7 +55,13 @@ def hin_fetch(subject, weights, pooling):
         file.write(log_content + report)
 
 #subject = input("Enter subject : ")
-subject = "Experiments, numerical models and optimization of carbon-epoxy plates damped by a frequency-dependent interleaved viscoelastic layer"
+subject = "State of the art on the identification of wood structure natural frequencies. Influence of the mechanical properties and interest in sensitivity analysis as prospects for reverse identification method of wood elastic properties."
+#subject = "Experiments, numerical models and optimization of carbon-epoxy plates damped by a frequency-dependent interleaved viscoelastic layer"
 
 # hin_fetch(subject, [title_weight, snippet_weight], [title_pooling, snippet_pooling])
-hin_fetch(subject, [1,1], [CLS_POOLING, MAX_POOLING])
+hin_fetch(subject, [1,0], [CLS_POOLING, MAX_POOLING])
+hin_fetch(subject, [1,0], [MEAN_POOLING,MAX_POOLING])
+hin_fetch(subject, [1,0], [MAX_POOLING, MAX_POOLING])
+hin_fetch(subject, [0,1], [CLS_POOLING, CLS_POOLING])
+hin_fetch(subject, [0,1], [CLS_POOLING, MEAN_POOLING])
+hin_fetch(subject, [0,1], [CLS_POOLING, MAX_POOLING])

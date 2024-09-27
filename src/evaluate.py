@@ -103,8 +103,13 @@ def score_results(subject, results, weights, pooling):
         scored_results_urls.append(url)
         
         # Compute similarity between subject and result
-        title_score = compute_similarity(subject_model_output, title, title_pooling)
-        snippet_score = compute_similarity(subject_model_output, snippet, snippet_pooling)
+
+        title_score, snippet_score = 1, 1
+        
+        if weights[0] != 0 :
+            title_score = compute_similarity(subject_model_output, title, title_pooling)
+        if weights[1] != 0 :
+            snippet_score = compute_similarity(subject_model_output, snippet, snippet_pooling)
 
         if title_score < title_score_bounds[0] :
             title_score_bounds[0] = title_score
@@ -129,8 +134,12 @@ def score_results(subject, results, weights, pooling):
     
     normalized_results = []
     for result in scored_results:
-        title_score = (result['title-score'] - title_score_bounds[0]) / (title_score_bounds[1] - title_score_bounds[0])
-        snippet_score = (result['snippet-score'] - snippet_score_bounds[0]) / (snippet_score_bounds[1] - snippet_score_bounds[0])
+        title_score, snippet_score = 1, 1
+
+        if weights[0] != 0 :
+            title_score = (result['title-score'] - title_score_bounds[0]) / (title_score_bounds[1] - title_score_bounds[0])
+        if weights[1] != 0 :
+            snippet_score = (result['snippet-score'] - snippet_score_bounds[0]) / (snippet_score_bounds[1] - snippet_score_bounds[0])
         
         score = math.pow(math.pow(title_score, weights[0]) * math.pow(snippet_score, weights[1]), 1 / (weights[0] + weights[1]))
         
