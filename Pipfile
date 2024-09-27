@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 transformers = "*"
 torch = "*"
+requests = "*"
+keybert = "*"
+progressbar = "*"
 
 [dev-packages]
 
