@@ -4,6 +4,10 @@ import torch.nn.functional as F
 import progressbar
 import math
 
+CLS_POOLING = 1
+MEAN_POOLING = 2
+MAX_POOLING = 3
+
 print("\n### Fetching SciBert ###\n")
 
 # Load the tokenizer and the model
@@ -15,26 +19,51 @@ model = AutoModel.from_pretrained('allenai/scibert_scivocab_uncased')
 
 print("* Got model")
 
-# Function to compute sentence embeddings by pooling token embeddings (CLS token)
-def get_sentence_embedding(text):
-    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+def get_subject_output(subject):
+    subject_inputs = tokenizer(subject, return_tensors="pt", padding=True, truncation=True, max_length=512)
     with torch.no_grad():
-        outputs = model(**inputs)
+        subject_outputs = model(**subject_inputs)
+
+    return subject_outputs
+
+# Function to compute the embedding with a selected pooling method
+def compute_similarity(subject_outputs, compare_text, pooling_method):
+    # Tokenize the input texts
+    compare_inputs = tokenizer(compare_text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+
+    # Compute embeddings for both the subject and the comparison text
+    with torch.no_grad():
+        compare_outputs = model(**compare_inputs)
+
+    # Pooling strategies
+    def cls_pooling(output):
+        return output.last_hidden_state[:, 0, :]  # CLS token is at index 0
+
+    def mean_pooling(output):
+        return output.last_hidden_state.mean(dim=1)  # Mean of all token embeddings
+
+    def max_pooling(output):
+        return output.last_hidden_state.max(dim=1).values  # Max of all token embeddings
+
+    # Choose pooling strategy based on the input integer
+    if pooling_method == CLS_POOLING:
+        subject_embedding = cls_pooling(subject_outputs)
+        compare_embedding = cls_pooling(compare_outputs)
+    elif pooling_method == MEAN_POOLING:
+        subject_embedding = mean_pooling(subject_outputs)
+        compare_embedding = mean_pooling(compare_outputs)
+    elif pooling_method == MAX_POOLING:
+        subject_embedding = max_pooling(subject_outputs)
+        compare_embedding = max_pooling(compare_outputs)
+    else:
+        raise ValueError("Pooling method must be 1 (CLS), 2 (Mean), or 3 (Max).")
+
+    return F.cosine_similarity(subject_embedding, compare_embedding).item()
+
+
+def score_results(subject, results, weights, pooling):
     
-    # Pooling strategy: Use the hidden state of the [CLS] token as the sentence embedding
-    cls_embedding = outputs.last_hidden_state[:, 0, :]  # Shape: (batch_size, hidden_size)
-    return cls_embedding
-
-
-# Function to compute cosine similarity
-def compute_similarity(embedding1, embedding2):
-    similarity = F.cosine_similarity(embedding1, embedding2)
-    return similarity.item()
-
-
-def score_results(subject, results, weights):
-    
-    subject_embedding = get_sentence_embedding(subject)
+    subject_model_output = get_subject_output(subject)
     print("* Tokenized subject\n")
     
     scored_results_urls = []
@@ -46,9 +75,16 @@ def score_results(subject, results, weights):
         maxval=len(results)).start()
     
     progress = 0
+    
     title_score_bounds = [1, 0]
     snippet_score_bounds = [1, 0]
+
+    title_pooling = pooling[0]
+    snippet_pooling = pooling[1]
+
     
+    log = f"Weights : {weights};\n\nPooling : {pooling}\n\n"
+        
     # Process each result
     for result in results :
         progress += 1
@@ -66,14 +102,9 @@ def score_results(subject, results, weights):
             
         scored_results_urls.append(url)
         
-        # Get embedding for the snippet (abstract)
-        #result_embedding = get_sentence_embedding(snippet)
-        title_embedding = get_sentence_embedding(title)
-        snippet_embedding = get_sentence_embedding(snippet)
-        
         # Compute similarity between subject and result
-        title_score = compute_similarity(subject_embedding, title_embedding)
-        snippet_score = compute_similarity(subject_embedding, snippet_embedding)
+        title_score = compute_similarity(subject_model_output, title, title_pooling)
+        snippet_score = compute_similarity(subject_model_output, snippet, snippet_pooling)
 
         if title_score < title_score_bounds[0] :
             title_score_bounds[0] = title_score
@@ -93,7 +124,7 @@ def score_results(subject, results, weights):
             'snippet-score': snippet_score
         })
 
-    log = f"Score bounds : T{title_score_bounds} # S{snippet_score_bounds}\n\n"
+    log += f"Score bounds : T{title_score_bounds} # S{snippet_score_bounds}\n\n"
     print("\n\n* Scored results\n")
     
     normalized_results = []
@@ -109,19 +140,17 @@ def score_results(subject, results, weights):
             'snippet': result['snippet'],
             'score': score,
         })
-
-    log += f"Weights : {weights};\n\n"
     
     return normalized_results, log
 
 
-def sort_results(subject, results, weights):
+def sort_results(subject, results, weights, pooling):
 
     print("\n### Starting result processing (",len(results),") ###\n")
 
     log = "\n---\n\n## Scoring\n\n"
     
-    scored_results, score_log = score_results(subject, results, weights)
+    scored_results, score_log = score_results(subject, results, weights, pooling)
 
     log += score_log
 
