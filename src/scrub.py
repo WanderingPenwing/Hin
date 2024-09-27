@@ -38,5 +38,7 @@ def scrub_web(queries) :
         web_bar.update(progress)
 
     print("")
+
+    
     
     return results, log
