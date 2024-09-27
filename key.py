@@ -36,7 +36,7 @@ for r in range(1, len(text_keywords) + 1):  # r is the length of combinations
 
 #print([" OR ".join(query) for query in queries])
 
-text_queries = [" OR ".join(query) for query in queries]
+text_queries = ["\"" + "\" OR \"".join(query) + "\"" for query in queries]
 
 text_queries.append(subject)
 

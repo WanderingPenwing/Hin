@@ -1,0 +1,19 @@
+# Me
+subject = "Experiments, numerical models and optimization of carbon-epoxy plates damped by a frequency-dependent interleaved viscoelastic layer"
+query = "composite viscoelastic damping"
+
+# Anne
+subject = "State of the art on the identification of wood structure natural frequencies. Influence of the mechanical properties and interest in sensitivity analysis as prospects for reverse identification method of wood elastic properties."
+query = "wood frequency analysis mechanical properties"
+
+# Axel
+subject = "Characterization of SiC MOSFET using double pulse test method."
+query = "SiC MOSFET double pulse test"
+
+# Paul
+subject = "Thermo-Mechanical Impact of temperature oscillations on bonding and metallization for SiC MOSFETs soldered on ceramic substrate"
+query = "thermo mechanical model discrete bonding SiC MOSFET"
+
+# Jam
+subject = "tig welding of inconel 625 and influences on micro structures"
+query = "tig welding inconel 625"
