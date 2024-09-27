@@ -6,9 +6,11 @@ mkShell {
     pipenv
     python3
     stdenv.cc.cc.lib
+    zlib
   ];
 
   shellHook = ''
       export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib";
+      export LD_LIBRARY_PATH="${pkgs.zlib}/lib:$LD_LIBRARY_PATH";
   '';
 }

@@ -9,6 +9,11 @@ torch = "*"
 requests = "*"
 keybert = "*"
 progressbar = "*"
+rake-nltk = "*"
+nltk = "*"
+spacy = "*"
+numpy = "*"
+gensim = "*"
 
 [dev-packages]
 
