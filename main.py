@@ -1,15 +1,10 @@
-import warnings
 from datetime import datetime
 import json
 import os
 
 from src.scrub import scrub_web
-from src.key import create_queries
+from src.key3 import create_queries
 from src.evaluate import sort_results, CLS_POOLING, MEAN_POOLING, MAX_POOLING
-
-# Suppress FutureWarnings and other warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
 
 def hin_fetch(subject, weights, pooling):
     current_time = datetime.now().strftime("%m-%d_%H-%M")
@@ -55,13 +50,16 @@ def hin_fetch(subject, weights, pooling):
         file.write(log_content + report)
 
 #subject = input("Enter subject : ")
-subject = "State of the art on the identification of wood structure natural frequencies. Influence of the mechanical properties and interest in sensitivity analysis as prospects for reverse identification method of wood elastic properties."
+#subject = "State of the art on the identification of wood structure natural frequencies. Influence of the mechanical properties and interest in sensitivity analysis as prospects for reverse identification method of wood elastic properties."
 #subject = "Experiments, numerical models and optimization of carbon-epoxy plates damped by a frequency-dependent interleaved viscoelastic layer"
+#subject = "Dynamic response of carbon-epoxy laminates including a perforated viscoelastic film"
+subject = "tig welding of inconel 625 and influences on micro structures"
+#subject = "Thermo-Mechanical Impact of temperature oscillations on bonding and metallization for SiC MOSFETs soldered on ceramic substrate"
 
 # hin_fetch(subject, [title_weight, snippet_weight], [title_pooling, snippet_pooling])
-hin_fetch(subject, [1,0], [CLS_POOLING, MAX_POOLING])
-hin_fetch(subject, [1,0], [MEAN_POOLING,MAX_POOLING])
-hin_fetch(subject, [1,0], [MAX_POOLING, MAX_POOLING])
-hin_fetch(subject, [0,1], [CLS_POOLING, CLS_POOLING])
-hin_fetch(subject, [0,1], [CLS_POOLING, MEAN_POOLING])
-hin_fetch(subject, [0,1], [CLS_POOLING, MAX_POOLING])
+hin_fetch(subject, [2,1], [CLS_POOLING, MAX_POOLING])
+#hin_fetch(subject, [1,0], [MEAN_POOLING,MAX_POOLING])
+#hin_fetch(subject, [1,0], [MAX_POOLING, MAX_POOLING])
+#hin_fetch(subject, [0,1], [CLS_POOLING, CLS_POOLING])
+#hin_fetch(subject, [0,1], [CLS_POOLING, MEAN_POOLING])
+#hin_fetch(subject, [0,1], [CLS_POOLING, MAX_POOLING])

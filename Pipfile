@@ -14,6 +14,9 @@ nltk = "*"
 spacy = "*"
 numpy = "*"
 gensim = "*"
+scikit-learn = "*"
+pandas = "*"
+groq = "*"
 
 [dev-packages]
 

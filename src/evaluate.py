@@ -3,6 +3,10 @@ import torch
 import torch.nn.functional as F
 import progressbar
 import math
+import warnings
+
+# Suppress FutureWarnings and other warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 CLS_POOLING = 1
 MEAN_POOLING = 2
@@ -66,7 +70,7 @@ def score_results(subject, results, weights, pooling):
     subject_model_output = get_subject_output(subject)
     print("* Tokenized subject\n")
     
-    scored_results_urls = []
+    scored_results_titles = []
     scored_results = []
 
     print("* Started scoring results\n")
@@ -89,18 +93,18 @@ def score_results(subject, results, weights, pooling):
     for result in results :
         progress += 1
         bar.update(progress)
+
+        if not ("content" in result) :
+            continue
             
         title = result['title']
         url = result['url']
         snippet = result['content']
     
-        if title == subject :
-            found_original = True
-    
-        if url in scored_results_urls :
+        if title in scored_results_titles :
             continue
             
-        scored_results_urls.append(url)
+        scored_results_titles.append(title)
         
         # Compute similarity between subject and result
 

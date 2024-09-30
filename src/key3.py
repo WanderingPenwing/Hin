@@ -1,4 +1,5 @@
 from groq import Groq
+from src.api import KEY
 
 client = Groq(
     api_key=KEY,
@@ -19,6 +20,5 @@ def create_queries(subject) :
     log = ""
 
     queries = chat_completion.choices[0].message.content.split("\n")
-    print(queries)
 
     return queries, log

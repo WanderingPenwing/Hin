@@ -12,6 +12,6 @@ mkShell {
   shellHook = ''
       export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib";
       export LD_LIBRARY_PATH="${pkgs.zlib}/lib:$LD_LIBRARY_PATH";
-      alias run="pipenv run python main.py; notify-send -u normal -a 'Hin' 'finished'"
+      alias hin="pipenv run python main.py; notify-send -u normal -a 'Hin' 'finished'"
   '';
 }
